@@ -1,8 +1,10 @@
 # Capistrano::Procfile
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/capistrano/procfile`. To experiment with that code, run `bin/console` for an interactive prompt.
+This gem helps exporting [Procfile][https://devcenter.heroku.com/articles/procfile] to system init daemon (e.g. systemd, upstart) configurations.
 
-TODO: Delete this and the text above, and describe your gem
+Notice: This gem calls `foreman export` to do the things. Therefore the supported format by foreman should be supported as well. However I use only systemd, so others formats are not tested. PRs are welcome! :)
+
+Currently we supports systemd only.
 
 ## Installation
 
@@ -22,7 +24,33 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+The following options are available. You can set these options in `config/deploy.rb`.
+
+```
+set :procfile_roles, %w(app)
+set :procfile_use_sudo, false
+set :procfile_options, {
+	export_format: :systemd,
+	export_path: "/etc/systemd/system",
+	working_dir: release_path,
+	log_dir: File.join(release_path, "log"),
+	base_port: 5000,
+	app_name: fetch(:application),
+	user: nil,
+	formation: "all=1"
+}
+```
+
+Run `cap production procfile:export` to export on the target machine.
+
+Host property is also available for options. Check the following example.
+
+```
+# config/deploy/production.rb
+
+server 'production1', user: 'app', roles: %w{app}, procfile_options: { formation: "web=1,worker=1" }
+server 'production2', user: 'app', roles: %w{app}, procfile_options: { formation: "worker=4" }
+```
 
 ## Development
 

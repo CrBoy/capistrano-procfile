@@ -1,7 +1,1 @@
-require "capistrano/procfile/version"
-
-module Capistrano
-  module Procfile
-    # Your code goes here...
-  end
-end
+load File.expand_path('../tasks/procfile.rake', __FILE__)
