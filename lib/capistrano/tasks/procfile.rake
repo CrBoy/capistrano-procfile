@@ -40,7 +40,7 @@ namespace :procfile do
 					args << "#{v} #{options[k]}" if options[k]
 				end
 
-				fetch(:procfile_use_sudo) ? sudo(*args) : execute(*args)
+				fetch(:procfile_use_sudo) ? execute(:rvmsudo, *args) : execute(*args)
 			end
 		end
 	end
